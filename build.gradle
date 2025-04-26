@@ -1,0 +1,94 @@
+plugins {
+    id 'dev.architectury.loom' version '1.9-SNAPSHOT'
+    id 'maven-publish'
+}
+
+group = project.maven_group
+version = project.mod_version
+base.archivesName = project.archives_name
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        name 'CjsahMaven'
+        url 'https://server.cjsah.net:1002/maven/'
+    }
+    maven {
+        name 'CurseMaven'
+        url "https://www.cursemaven.com"
+    }
+    maven {
+        name "ModrinthMaven"
+        url "https://api.modrinth.com/maven"
+    }
+    maven {
+        name "NeoForged"
+        url "https://maven.neoforged.net/releases/"
+    }
+}
+
+loom {
+    silentMojangMappingsLicense()
+
+    accessWidenerPath = file("src/main/resources/gca.accesswidener")
+}
+
+dependencies {
+    minecraft "net.minecraft:minecraft:$project.minecraft_version"
+    mappings loom.officialMojangMappings()
+    neoForge "net.neoforged:neoforge:$project.neoforge_version"
+
+    modImplementation("maven.modrinth:bedsheet:$project.bedsheet_version")
+
+    include(implementation('jep:jep:2.24'))
+}
+
+processResources {
+    inputs.property 'version', project.version
+
+    filesMatching('META-INF/neoforge.mods.toml') {
+        def valueMap = [
+                "version"                   : project.version,
+                "neoforge_version_rage"     : project.neoforgeVersionRage,
+                "minecraft_version_rage"    : project.minecraftVersionRage,
+                "bedsheet_version_rage"     : project.bedsheetVersionRage
+        ]
+        expand valueMap
+    }
+}
+
+java {
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
+
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 21
+}
+
+remapJar {
+    atAccessWideners.add("gca.accesswidener")
+}
+
+// Configure Maven publishing.
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {
+        // Add repositories to publish to here.
+        // Notice: This block does NOT have the same function as the block in the top level.
+        // The repositories here will be used for publishing your artifact, not for
+        // retrieving dependencies.
+    }
+}

@@ -1,0 +1,40 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+#issueTrackerURL = ""
+license = "MIT"
+
+[[mods]]
+modId = "bedsheet_gca"
+version = "${version}"
+displayName = "BedSheetGCA"
+displayURL = "https://github.com/ThinkingStudio/BedSheetGCA"
+credits = "Gugle"
+authors = "TexTrue, ThinkingStudio"
+description = '''
+Gugle Carpet Addition unofficial NeoForge port.
+'''
+logoFile = "assets/gca/icon.png"
+
+[[dependencies.bedsheet_gca]]
+modId = "neoforge"
+type = "required"
+versionRange = "${neoforge_version_rage}"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.bedsheet_gca]]
+modId = "minecraft"
+type = "required"
+versionRange = "${minecraft_version_rage}"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.bedsheet_gca]]
+modId = "bedsheet"
+type = "required"
+versionRange = "${bedsheet_version_rage}"
+ordering = "NONE"
+side = "SERVER"
+
+[[mixins]]
+config = "gca.mixins.json"
